@@ -8,6 +8,7 @@ function App() {
 
   const [todoList, setTodoList] = useState([]);
   const [newTitle, setNewTitle] = useState("");
+  const [newComments, setNewComments] = useState({});
 
   useEffect(() => {
     fetchTodoList();
@@ -73,7 +74,24 @@ function App() {
       console.error("Error deleting todo:", error);
     }
   }
-
+  async function addNewComment(todoId) {
+    try {
+      const url = `${TODOLIST_API_URL}${todoId}/comments/`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 'message': newComments[todoId] || "" }),
+      });
+      if (response.ok) {
+        setNewComments({ ...newComments, [todoId]: "" });
+        await fetchTodoList();
+      }
+    } catch (error) {
+      console.error("Error adding new comment:", error);
+    }
+  }
   return (
     <>
       <h1>Todo List</h1>
@@ -90,6 +108,17 @@ function App() {
                   {todo.comments.map(comment => (
                     <li key={comment.id}>{comment.message}</li>
                   ))}
+                              <div className="new-comment-forms">
+              <input
+                type="text"
+                value={newComments[todo.id] || ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setNewComments({ ...newComments, [todo.id]: value });
+                }}
+              />
+              <button onClick={() => {addNewComment(todo.id)}}>Add Comment</button>
+            </div>
                 </ul>
               </>
             )}
