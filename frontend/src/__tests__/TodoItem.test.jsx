@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect } from 'vitest'
 import TodoItem from '../TodoItem.jsx'
+import userEvent from '@testing-library/user-event'
 
 const baseTodo = {             // ** TodoItem พื้นฐานสำหรับทดสอบ
     id: 1,
@@ -43,5 +44,27 @@ describe('TodoItem', () => {
             <TodoItem todo={todoWithComment} />
         );
         expect(screen.queryByText('No comments')).not.toBeInTheDocument();
+    });
+    it('makes callback to toggleDone when Toggle button is clicked', () => {
+        const onToggleDone = vi.fn();
+        render(
+            <TodoItem
+                todo={baseTodo}
+                toggleDone={onToggleDone} />
+        );
+        const button = screen.getByRole('button', { name: /toggle/i });
+        button.click();
+        expect(onToggleDone).toHaveBeenCalledWith(baseTodo.id);
+    });
+    it('makes callback to deleteTodo when delete button is clicked', () => {
+        const onDeleteTodo = vi.fn();
+        render(
+            <TodoItem
+                todo={baseTodo}
+                deleteTodo={onDeleteTodo} />
+        );
+        const button = screen.getByRole('button', { name: /delete/i });
+        button.click();
+        expect(onDeleteTodo).toHaveBeenCalledWith(baseTodo.id);
     });
 });

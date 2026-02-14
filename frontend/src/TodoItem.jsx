@@ -7,7 +7,7 @@ function TodoItem({ todo, toggleDone, deleteTodo, addNewComment }) {
         <li>
             <span className={todo.done ? "done" : ""}>{todo.title}</span>
             <button onClick={() => { toggleDone(todo.id) }}>Toggle</button>
-            <button onClick={() => { deleteTodo(todo.id) }}>❌</button>
+            <button aria-label="Delete" onClick={() => { deleteTodo(todo.id) }}>❌</button>
             {(!todo.comments || todo.comments.length === 0) && <p>No comments</p>}
             {(todo.comments) && (todo.comments.length > 0) && (
                 <>
