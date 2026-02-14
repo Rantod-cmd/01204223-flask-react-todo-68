@@ -16,23 +16,23 @@ function TodoItem({ todo, toggleDone, deleteTodo, addNewComment }) {
                         {todo.comments.map(comment => (
                             <li key={comment.id}>{comment.message}</li>
                         ))}
-                        <div className="new-comment-forms">
-                            <input
-                                type="text"
-                                value={newComment}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    setNewComment(value);
-                                }}
-                            />
-                            <button onClick={() => {
-                                addNewComment(todo.id, newComment);
-                                setNewComment("");
-                            }}>Add Comment</button>
-                        </div>
                     </ul>
                 </>
             )}
+            <div className="new-comment-forms">
+                <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        setNewComment(value);
+                    }}
+                />
+                <button onClick={() => {
+                    addNewComment(todo.id, newComment);
+                    setNewComment("");
+                }}>Add Comment</button>
+            </div>
         </li>
     )
 }

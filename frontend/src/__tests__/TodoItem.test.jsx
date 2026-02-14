@@ -67,4 +67,18 @@ describe('TodoItem', () => {
         button.click();
         expect(onDeleteTodo).toHaveBeenCalledWith(baseTodo.id);
     });
+    it('makes callback to addNewComment when a new comment is added', async () => {
+        const onAddNewComment = vi.fn();
+        render(
+            <TodoItem
+                todo={baseTodo}
+                addNewComment={onAddNewComment} />
+        );
+
+        const input = screen.getByRole('textbox');
+        await userEvent.type(input, 'New comment');
+        const button = screen.getByRole('button', { name: /add/i });
+        button.click();
+        expect(onAddNewComment).toHaveBeenCalledWith(baseTodo.id, 'New comment');
+    });
 });
