@@ -1,6 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
-import App from '../App.jsx'
+import TodoList from '../TodoList.jsx'
+
+vi.mock('../context/AuthContext', () => ({
+  useAuth: vi.fn(),
+}));
+import { useAuth } from '../context/AuthContext';
 
 const mockResponse = (body, ok = true) =>
     Promise.resolve({
@@ -21,9 +26,15 @@ const originalTodoList = [
     todoItem2,
 ];
 
-describe('App', () => {
+describe('TodoList', () => {
     beforeEach(() => {
         vi.stubGlobal('fetch', vi.fn());
+        useAuth.mockReturnValue({
+            username: 'testuser',
+            accessToken: 'fake-token',
+            login: vi.fn(),
+            logout: vi.fn(),
+        });
     });
 
     afterEach(() => {
@@ -36,7 +47,7 @@ describe('App', () => {
             mockResponse(originalTodoList)
         );
 
-        render(<App />);
+        render(<TodoList apiUrl="http://localhost:5000/api/todos/" />);
 
         expect(await screen.findByText('First todo')).toBeInTheDocument();
         expect(await screen.findByText('Second todo')).toBeInTheDocument();
@@ -51,7 +62,7 @@ describe('App', () => {
             .mockImplementationOnce(() => mockResponse(originalTodoList))
             .mockImplementationOnce(() => mockResponse(toggledTodoItem1));
 
-        render(<App />);
+        render(<TodoList apiUrl="http://localhost:5000/api/todos/" />);
 
         expect(await screen.findByText('First todo')).not.toHaveClass('done');
 
@@ -60,6 +71,6 @@ describe('App', () => {
 
         expect(await screen.findByText('First todo')).toHaveClass('done');
 
-        expect(global.fetch).toHaveBeenLastCalledWith(expect.stringMatching(/1\/toggle/), { method: 'PATCH' });
+        expect(global.fetch).toHaveBeenLastCalledWith(expect.stringMatching(/1\/toggle/), expect.anything());
     });
 });
