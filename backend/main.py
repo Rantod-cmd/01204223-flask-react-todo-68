@@ -1,6 +1,7 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_migrate import Migrate  
+from flask_migrate import Migrate
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy import Integer, String, ForeignKey                            # เพิ่ม import Foreignkey
@@ -8,11 +9,15 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship                # 
 import click
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from flask_jwt_extended import JWTManager
-from models import TodoItem, Comment, User, db   
+from dotenv import load_dotenv
+from models import TodoItem, Comment, User, db
+
+load_dotenv()
+
 app = Flask(__name__)
 CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
-app.config['JWT_SECRET_KEY'] = 'fdsjkfjioi2rjshr2345hrsh043j5oij5545'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///todos.db')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'fdsjkfjioi2rjshr2345hrsh043j5oij5545')
 jwt = JWTManager(app)
 
 db.init_app(app)  
